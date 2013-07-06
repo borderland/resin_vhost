@@ -1,0 +1,146 @@
+<resin xmlns="http://caucho.com/ns/resin"  
+        xmlns:resin="urn:java:com.caucho.resin">  
+
+    <!--
+     - Logging configuration for the JDK logging API.
+    -->
+    <log-handler name="" level="all" path="stdout:"
+               timestamp="[%y-%m-%d %H:%M:%S.%s] {%{thread}} "/> 
+
+  <!--
+     - level='info' for production
+     - 'fine' or 'finer' for development and troubleshooting
+    -->
+  
+  <logger name="com.caucho" level="info"/>
+
+
+  <logger name="com.caucho.java" level="config"/>
+  <logger name="com.caucho.loader" level="config"/>
+  
+  <stdout-log path-format="log/stdout.log.%Y%m%d" timestamp="%Y-%m-%d %H:%M:%S" rollover-period="1D"/>
+  <stderr-log path-format="log/stderr.log.%Y%m%d" timestamp="%Y-%m-%d %H:%M:%S" rollover-period="1D"/> 
+  <!--
+     - driver .jar files can be placed in ${resin.root}/ext-lib
+     -->
+  <class-loader>
+    <tree-loader path="${resin.root}/ext-lib"/>
+  </class-loader>
+
+  <!--
+     - Remote management requires at least one enabled admin user.
+    -->
+  <resin:AdminAuthenticator>
+    <resin:import path="${__DIR__}/admin-users.xml" optional="true"/>
+  </resin:AdminAuthenticator>
+
+  <!--
+     - For production sites, change dependency-check-interval to something
+     - like 600s, so it only checks for updates every 10 minutes.
+    -->
+  <dependency-check-interval>-1s</dependency-check-interval>
+
+  <!-- Java system-properties -->
+  <system-property mail.smtp.host="127.0.0.1"/>
+  <system-property mail.smtp.port="25"/>
+
+
+
+   <cluster-default>
+     <!-- shared webapp jars for non-classloader-aware libraries -->
+     <web-app-default>
+       <class-loader>
+         <library-loader path="${resin.home}/webapp-jars"/>
+       </class-loader>
+     </web-app-default>
+
+	 <resin:import path="${__DIR__}/app-default.xml"/>
+	 <!-- enables development error pages -->
+     <development-mode-error-page/>
+
+	 <!--
+       - Enables the proxy cache (available in Resin Professional) 
+      -->
+    <resin:if test="${resin.professional}">
+      <cache memory-size="64M">
+       <!-- Vary header rewriting for IE -->
+        <rewrite-vary-as-private/>
+      </cache>
+    </resin:if>
+    
+    <!--
+       - Admin services
+      -->
+    <resin:DeployService/>
+    
+    <resin:if test="${resin.professional}">
+      <resin:AdminServices/>
+    </resin:if>
+
+    <!--
+       - Configuration for the health monitoring system
+      -->
+    <resin:if test="${resin.professional}">
+      <resin:import path="${__DIR__}/health.xml" optional="true"/>
+    </resin:if>
+
+	 <host-default>
+      <access-log path="log/access.log" 
+                format='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"'
+                rollover-period="1W"/>
+
+      <!-- creates the webapps directory for .war expansion -->
+      <!--web-app-deploy path="webapps" versioning="true"/-->
+
+      <!--
+         - Defaults applied to each web-app.
+        -->
+      <web-app-default>
+        <prologue>
+          <allow-servlet-el/>
+        </prologue>
+
+        <session-config>
+	  <!--
+	     - enable persistent sessions
+             - <use-persistent-store/>
+	    -->
+          <enable-url-rewriting>false</enable-url-rewriting>
+        </session-config>
+     
+        <!--
+           - Sets max-age for cacheable pages, e.g. static pages.
+          -->
+        <resin:if test="${resin.professional}">
+          <cache-mapping url-pattern="/" max-age="5s"/>
+          <cache-mapping url-pattern="*.gif" max-age="60s"/>
+          <cache-mapping url-pattern="*.jpg" max-age="60s"/>
+          <cache-mapping url-pattern="*.png" max-age="60s"/>
+          <cache-mapping url-pattern="*.css" max-age="60s"/>
+          <cache-mapping url-pattern="*.js" max-age="60s"/>
+         </resin:if>
+      </web-app-default>
+    </host-default>
+   </cluster-default>
+
+   <cluster id="zhongzhi">     
+	<resin:import path="${__DIR__}/vhosts/zhongzhi.xml" />
+   </cluster>
+   
+   
+   <cluster id="hushi">
+         <resin:import path="${__DIR__}/vhosts/hushi.xml" />
+   </cluster>
+   
+   <cluster id="russian">
+         <resin:import path="${__DIR__}/vhosts/russian.xml" />
+   </cluster>
+   
+   <cluster id="prezhongzhi">
+         <resin:import path="${__DIR__}/vhosts/prezhongzhi.xml" />
+   </cluster>
+
+
+ 
+</resin> 
+

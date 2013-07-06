@@ -1,0 +1,43 @@
+<cluster xmlns="http://caucho.com/ns/resin"  
+        xmlns:resin="urn:java:com.caucho.resin">  
+    <server id="hushi">
+		<watchdog-port>6800</watchdog-port>
+		<http address="*" port="9080"/>
+
+	   <jvm-arg>-Xmx512m</jvm-arg>
+           <jvm-arg>-Xms512m</jvm-arg>
+           <jvm-arg>-Xmn256m</jvm-arg>	
+           <jvm-arg>-Xss128k</jvm-arg>
+           <!--张超添加 测试outofmemory -->
+           <jvm-arg>-XX:MaxNewSize=256m</jvm-arg>
+           <jvm-arg>-XX:PermSize=128m</jvm-arg>
+           <jvm-arg>-XX:MaxPermSize=256m</jvm-arg>
+           <jvm-arg>-XX:SurvivorRatio=16</jvm-arg>
+	   <jvm-arg>-XX:-ReduceInitialCardMarks</jvm-arg>
+	   <jvm-arg>-XX:+HeapDumpOnOutOfMemoryError</jvm-arg>
+           <jvm-arg>-Xdebug</jvm-arg>
+           <jvm-arg>-Dcom.sun.management.jmxremote</jvm-arg>
+
+	   <watchdog-arg>-Dcom.sun.management.jmxremote</watchdog-arg>
+	   <!--memory-free-min>1M</memory-free-min-->
+
+	    <!--thread-max>2048</thread-max-->
+	  <socket-timeout>30s</socket-timeout>
+          <keepalive-max>256</keepalive-max>
+          <keepalive-timeout>60s</keepalive-timeout>
+     </server>
+    
+     <host id="" root-directory=".">
+       <web-app id="/" root-directory="/home/www/itest_hushi"/>
+       <logger name="com.caucho" level="info"/>
+       <logger name="com.caucho.java" level="config"/>
+       <logger name="com.caucho.loader" level="config"/>
+       <stdout-log path-format="log/hushi-stdout.log.%Y%m%d" timestamp="%Y-%m-%d %H:%M:%S" rollover-period="1D"/>
+       <stderr-log path-format="log/hushi-stderr.log.%Y%m%d" timestamp="%Y-%m-%d %H:%M:%S" rollover-period="1D"/>
+     <!-- <web-app id="/bwoltest" root-directory="/home/www/itest/bwoltest"/>-->
+	   <!--
+         - Administration application /resin-admin
+        -->
+
+     </host>
+</cluster>
