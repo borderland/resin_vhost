@@ -8,10 +8,11 @@
 		<watchdog-port>6802</watchdog-port>
 		<http address="*" port="9082"/>
 
-	   <jvm-arg>-Xmx512m</jvm-arg>
-           <jvm-arg>-Xms512m</jvm-arg>
+	   <jvm-arg>-Xmx4096m</jvm-arg>
+           <jvm-arg>-Xms4096m</jvm-arg>
            <jvm-arg>-Xmn256m</jvm-arg>	
            <jvm-arg>-Xss128k</jvm-arg>
+           <!--张超添加 测试outofmemory -->
            <jvm-arg>-XX:MaxNewSize=256m</jvm-arg>
            <jvm-arg>-XX:PermSize=128m</jvm-arg>
            <jvm-arg>-XX:MaxPermSize=256m</jvm-arg>

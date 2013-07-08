@@ -4,8 +4,8 @@
 		<watchdog-port>6800</watchdog-port>
 		<http address="*" port="9080"/>
 
-	   <jvm-arg>-Xmx512m</jvm-arg>
-           <jvm-arg>-Xms512m</jvm-arg>
+	   <jvm-arg>-Xmx4096m</jvm-arg>
+           <jvm-arg>-Xms4096m</jvm-arg>
            <jvm-arg>-Xmn256m</jvm-arg>	
            <jvm-arg>-Xss128k</jvm-arg>
            <!--张超添加 测试outofmemory -->
